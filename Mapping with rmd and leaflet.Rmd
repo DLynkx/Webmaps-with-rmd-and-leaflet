@@ -1,0 +1,68 @@
+---
+title: "Mapping with R leaflet"
+author: "Franklin X. Dono"
+date: "11/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Executive summary
+
+Owing to advancements in technolgy to accurately and speedly capture geographical informtion, spatial solution have become more relevant today than ever. Understanding the role of spatial relationships on the solutions we proffer will certainly add more value to your output as a data scientist.  
+  
+This assignment aims at creating a web page using R Markdown that features a map created with Leaflet.The data used for this assignment is obtained from <https://mapcruzin.com/free-ghana-country-city-place-gis-shapefiles.htm>. It contains the locations of cites, towns, villages, hamlets and suburbs in Ghana.
+
+### Loading libraries and data
+
+Loading libraries
+
+```{r libraries, echo=TRUE, comment= " "}
+
+suppressPackageStartupMessages({
+library(rgdal)
+library(leaflet)        
+})
+
+```
+
+Importing data
+
+```{r data, echo=TRUE, comment= " "}
+
+url <- "https://github.com/DLynkx/Webmaps-with-rmd-and-leaflet/raw/master/New%20Regions.zip"
+
+if (!file.exists("./New Regions.shp") & !file.exists("./gis.osm_places_free_1")){
+        download.file(url,"./New_Regions.zip")
+        unzip("./New_Regions.zip")
+}
+regions <- readOGR(dsn = getwd() , layer = "New Regions", verbose = FALSE)
+locations <- readOGR(dsn = getwd() , layer = "gis.osm_places_free_1", verbose = FALSE)
+
+```
+
+### Exploratory data analysis
+
+Regions
+```{r regions, echo=TRUE, comment= " "}
+
+head(regions@data)
+
+```
+
+Locations
+```{r locations, echo=TRUE, comment= " "}
+
+head(locations@data)
+
+```
+
+### Map created on 15 - Nov - 2020
+
+```{r mapping, echo=TRUE}
+
+leaflet() %>% addTiles %>% addPolygons(data = regions) %>% addCircleMarkers(data = locations, clusterOptions = markerClusterOptions(), popup = locations$name)
+
+```
